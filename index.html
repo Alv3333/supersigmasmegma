@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Free Money Generator</title>
+
+<style>
+body{
+    margin:0;
+    background:black;
+    color:#00ff00;
+    font-family:monospace;
+    overflow:hidden;
+}
+
+#panel{
+    width:480px;
+    margin:40px auto;
+    border:2px solid #00ff00;
+    padding:12px;
+    text-align:center;
+}
+
+#status{ margin-bottom:6px; }
+
+#log{
+    height:160px;
+    overflow:hidden;
+    border:1px solid #00ff00;
+    padding:6px;
+    font-size:12px;
+    text-align:left;
+}
+
+#barbox{
+    border:1px solid #00ff00;
+    height:16px;
+    margin:6px 0;
+}
+
+#bar{
+    height:16px;
+    width:0%;
+    background:#00ff00;
+}
+
+button{
+    background:black;
+    color:#00ff00;
+    border:1px solid #00ff00;
+    padding:8px 18px;
+    cursor:pointer;
+}
+
+.popup{
+    position:absolute;
+    width:260px;
+    border:2px solid #00ff00;
+    background:black;
+    padding:6px;
+    box-shadow:0 0 10px #00ff00;
+    animation:shake 0.15s infinite alternate;
+}
+
+@keyframes shake{
+    from{transform:translate(0,0);}
+    to{transform:translate(2px,1px);}
+}
+</style>
+</head>
+<body>
+
+<div id="panel">
+    <h3>FREE MONEY GENERATOR</h3>
+    <div id="status">Waiting…</div>
+    <div id="barbox"><div id="bar"></div></div>
+    <div id="log"></div>
+    <br>
+    <button onclick="start()">Generate</button>
+</div>
+
+<script>
+let p = 0;
+let timer;
+let audioCtx;
+let voiceLoopRunning = false;
+
+// Long scary-but-safe Russian sentence
+const russianSentence = "Внимание, обнаружена нестабильная активность в системе, начинается глубокая проверка процессов и визуальная симуляция сбоя, пожалуйста, оставайтесь на этом экране и наблюдайте за происходящими изменениями в интерфейсе.";
+
+// Fake actions
+const badStuff = [
+"Launching free money engine…",
+"Connecting hidden servers…",
+"Reading saved emails…",
+"Collecting private profiles…",
+"Deleting random files…",
+"Copying browser history…",
+"Removing security rules…",
+"Stealing session tokens…",
+"Scraping messages…",
+"Dumping account lists…",
+"Cloning cloud folders…",
+"Erasing backups…",
+"Overwriting system data…",
+"Breaking access controls…",
+"Exporting user info…",
+"Destroying activity logs…",
+"Locking student accounts…",
+"Disabling protections…",
+"Packaging stolen data…",
+"Uploading secret archive…"
+];
+
+function logLine(text){
+    const box = document.getElementById("log");
+    box.innerHTML += text + "<br>";
+    box.scrollTop = box.scrollHeight;
+}
+
+function popup(text){
+    const d = document.createElement("div");
+    d.className = "popup";
+    d.innerText = text;
+    d.style.left = Math.random() * (window.innerWidth - 280) + "px";
+    d.style.top  = Math.random() * (window.innerHeight - 120) + "px";
+    document.body.appendChild(d);
+    setTimeout(()=>d.remove(), 1800);
+}
+
+// Simple evil beep laugh
+function evilLaugh(){
+    if(!audioCtx){
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    let t = audioCtx.currentTime;
+    for(let i=0;i<7;i++){
+        const o = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        o.connect(g);
+        g.connect(audioCtx.destination);
+        o.frequency.value = 750 - i*65;
+        g.gain.setValueAtTime(0.12, t);
+        o.start(t);
+        o.stop(t + 0.12);
+        t += 0.13;
+    }
+}
+
+// Repeating Russian voice
+function startRussianVoiceLoop(){
+    if(voiceLoopRunning) return;
+    voiceLoopRunning = true;
+    function speakLoop(){
+        if(!voiceLoopRunning) return;
+        const u = new SpeechSynthesisUtterance(russianSentence);
+        u.lang = "ru-RU";
+        u.rate = 0.9;
+        u.pitch = 1.0;
+        u.volume = 1.0;
+        u.onend = function(){ setTimeout(speakLoop, 700); };
+        speechSynthesis.speak(u);
+    }
+    speakLoop();
+}
+
+function start(){
+    clearInterval(timer);
+    p = 0;
+    document.getElementById("bar").style.width = "0%";
+    document.getElementById("log").innerHTML = "";
+    document.getElementById("status").innerText = "Starting free money generator…";
+    logLine("Session opened.");
+    logLine("Target environment detected.");
+    startRussianVoiceLoop();
+
+    timer = setInterval(()=>{
+        p++;
+        document.getElementById("bar").style.width = p + "%";
+        if(p % 3 === 0){
+            const a = badStuff[Math.floor(Math.random()*badStuff.length)];
+            logLine(a);
+        }
+        if(p % 10 === 0) popup("ACCESS GRANTED");
+        if(p === 30){ popup("FILES REMOVED"); evilLaugh(); }
+        if(p === 50){ popup("PRIVATE DATA FOUND"); evilLaugh(); }
+        if(p === 70){ popup("SYSTEM DAMAGE DETECTED"); evilLaugh(); }
+        if(p === 85){
+            const fakeIP = "999.999.999.999";
+            logLine("Target IP locked: " + fakeIP);
+            popup("IP CAPTURED: " + fakeIP);
+        }
+        if(p >= 100){
+            clearInterval(timer);
+            logLine("HACKING OTHER DEVICES ON BAKERSTUDENT NETWORK");
+            document.getElementById("status").innerText = "COMPLETE";
+            popup("PROCESS FINISHED");
+            evilLaugh();
+        }
+    }, 45);
+}
+</script>
+
+</body>
+</html>
